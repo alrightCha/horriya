@@ -1,23 +1,21 @@
-package crypto
+package core
 
 import (
 	"crypto"
 	"crypto/ed25519"
 	"crypto/rand"
-	"horriya/method"
 	"horriya/utils"
-	"method"
 )
 
-type Identity struct {
+type Keys struct {
 	pubkey     ed25519.PublicKey
 	privateKey ed25519.PrivateKey
 }
 
-func GenerateKey() Identity {
+func GenerateKey() Keys {
 	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
 
-	var identity Identity = Identity{
+	var identity Keys = Keys{
 		pubkey:     pub,
 		privateKey: priv,
 	}
@@ -35,19 +33,24 @@ func VerifyMessage(pub ed25519.PublicKey, message []byte, signature []byte) bool
 	return ok
 }
 
-func (identity Identity) WritePost(content string) {
+// Might need to change this function's place
+func (identity Keys) WritePost(content string) (Post, error) {
 	now := utils.Now()
-	var signature []byte
 
-	post := method.Post{
-		content:   content,
-		timestamp: now,
-		identity:  identity.pubkey,
-		signature: signature,
+	post := Post{
+		Content:   content,
+		Timestamp: now,
+		Sender:    identity.pubkey,
+		Signature: nil,
 	}
 
 	serialized := post.SerializePost()
 
-	inBytes, err = SignMessage(identity.privateKey, serialized)
+	signature, err := SignMessage(identity.privateKey, serialized)
+	if err != nil {
+		return Post{}, err
+	}
 
+	post.Signature = signature
+	return post, nil
 }
