@@ -1,0 +1,10 @@
+study these links: 
+
+https://github.com/RowlandEden/blockchain-developer-roadmap
+
+https://docs.libp2p.io/concepts/fundamentals/addressing/
+
+https://bitcoin.org/bitcoin.pdf
+
+https://docs.ipfs.tech/concepts/what-is-ipfs/
+
